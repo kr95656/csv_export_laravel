@@ -18,7 +18,7 @@ class Contact extends Model
             'contacts.id',
             'cd.name AS condition_name',
             'd.name AS design_name',
-            'contacts.surname',
+            'contacts.sur_name',
             'contacts.name',
             'contacts.zipcode',
             'contacts.pref',

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Contact;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Models\Contact;
 
 // CSVエクスポートには大きく分けて、以下2つの作業が必要
 // CSVファイルに必要なデータを集め、整形する（SQL）
@@ -14,12 +14,6 @@ class ContactController extends Controller
 {
     public function showContact(Request $request)
     {
-        // $contacts = Contact::select('contacts.*', 'c.name AS condition_name', 'd.name AD design_name')
-        //     ->where('contacts.status', 1)
-        //     ->leftJoin('conditions AS c', 'contacts.condition_id', '=', 'c.id')
-        //     ->leftJoin('designs AS d', 'contacts.design_id', '=', 'd.id')
-        //     ->orderBy('contacts.created_at', 'DESC')
-        //     ->get();
 
         $contacts = Contact::select('contacts.*','c.name AS condition_name','d.name AS design_name')
             ->where('contacts.status', 1)
@@ -27,7 +21,6 @@ class ContactController extends Controller
             ->leftJoin('designs AS d', 'contacts.design_id','=','d.id')
             ->orderBy('contacts.created_at', 'DESC')
             ->get();
-
         return view('top')
             ->with('contacts', $contacts);
     }
@@ -35,8 +28,9 @@ class ContactController extends Controller
     public function exportContactCsv(Request $request)
     {
         $post = $request->all();
-        $response = new StreamedResponse(function () use($request, $post){
-            $stream = fopen('php://output','W');
+        $response = new StreamedResponse(function () use ($request, $post) {
+
+            $stream = fopen('php://output','w');
             $contact = new Contact();
 
             // 文字化け回避
@@ -48,9 +42,9 @@ class ContactController extends Controller
             $results = $contact->getCsvData($post['start_date'], $post['end_date']);
 
             if (empty($results[0])) {
-                fputcsv($stream, [
-                    'データが存在しません'
-                ]);
+                    fputcsv($stream, [
+                        'データが存在しませんでした',
+                    ]);
             } else {
                 foreach ($results as $row) {
                     fputcsv($stream, $contact->csvRow($row));
@@ -58,6 +52,7 @@ class ContactController extends Controller
             }
             fclose($stream);
         });
+
         $response->headers->set('Content-Type', 'application/octet-stream');
         $response->headers->set('content-disposition', 'attachment; filename='. $post['start_date'] . '〜' . $post['end_date'] . 'お問い合わせ一覧.csv');
 
