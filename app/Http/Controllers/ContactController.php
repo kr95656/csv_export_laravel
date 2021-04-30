@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Models\Contact;
 use App\Models\Design;
@@ -20,20 +21,13 @@ class ContactController extends Controller
         //     ->get();
         // dd($designs);
 
-        // $contacts = Contact::select('contacts.*','c.name AS condition_name','d.name AS design_name')
-        //     ->where('contacts.status', 1)
-        //     ->leftJoin('conditions AS c', 'contacts.condition_id','=','c.id')
-        //     ->leftJoin('designs AS d', 'contacts.design_id','=','d.id')
-        //     ->orderBy('contacts.created_at', 'DESC')
-        //     ->get();
-            // dd($contacts);
-        $contacts = Contact::select('contacts.*','conditions.name AS test ','designs.name AS test1')
+        //エイリアスで新たにカラム名を作成しないと、joinした値をひっぱてこられない？
+        $contacts = Contact::select('contacts.*','c.name AS condition_name','d.name AS design_name')
             ->where('contacts.status', 1)
-            ->leftJoin('conditions', 'contacts.condition_id','=','conditions.id')
-            ->leftJoin('designs', 'contacts.design_id','=','designs.id')
+            ->leftJoin('conditions AS c', 'contacts.condition_id','=','c.id')
+            ->leftJoin('designs AS d', 'contacts.design_id','=','d.id')
             ->orderBy('contacts.created_at', 'DESC')
             ->get();
-            dd($contacts);
         return view('top')
             ->with('contacts', $contacts);
     }

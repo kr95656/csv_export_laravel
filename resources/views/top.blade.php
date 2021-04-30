@@ -34,8 +34,6 @@
         @foreach ($contacts as $contact)
             <tr>
                 <td>{{$contact->id}}</td>
-                {{-- <td>{{$contact->conditions->name}}</td>
-                <td>{{$contact->designs->name}}</td> --}}
                 <td>{{$contact->condition_name}}</td>
                 <td>{{$contact->design_name}}</td>
                 <td>{{$contact->sur_name}}{{$contact->name}}</td>
