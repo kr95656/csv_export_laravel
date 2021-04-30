@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Models\Contact;
+use App\Models\Design;
 
 // CSVエクスポートには大きく分けて、以下2つの作業が必要
 // CSVファイルに必要なデータを集め、整形する（SQL）
@@ -14,13 +15,25 @@ class ContactController extends Controller
 {
     public function showContact(Request $request)
     {
+        // $designs = Design::select('designs.*', 'contacts.email')
+        //     ->leftJoin('contacts', 'designs.id', '=', 'contacts.design_id')
+        //     ->get();
+        // dd($designs);
 
-        $contacts = Contact::select('contacts.*','c.name AS condition_name','d.name AS design_name')
+        // $contacts = Contact::select('contacts.*','c.name AS condition_name','d.name AS design_name')
+        //     ->where('contacts.status', 1)
+        //     ->leftJoin('conditions AS c', 'contacts.condition_id','=','c.id')
+        //     ->leftJoin('designs AS d', 'contacts.design_id','=','d.id')
+        //     ->orderBy('contacts.created_at', 'DESC')
+        //     ->get();
+            // dd($contacts);
+        $contacts = Contact::select('contacts.*','conditions.name AS test ','designs.name AS test1')
             ->where('contacts.status', 1)
-            ->leftJoin('conditions AS c', 'contacts.condition_id','=','c.id')
-            ->leftJoin('designs AS d', 'contacts.design_id','=','d.id')
+            ->leftJoin('conditions', 'contacts.condition_id','=','conditions.id')
+            ->leftJoin('designs', 'contacts.design_id','=','designs.id')
             ->orderBy('contacts.created_at', 'DESC')
             ->get();
+            dd($contacts);
         return view('top')
             ->with('contacts', $contacts);
     }
