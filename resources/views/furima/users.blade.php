@@ -46,4 +46,34 @@
         @endforeach
         </tbody>
     </table>
+    <a href="#modal" class='btn btn-primary csv-modal m-3'>CSVエクスポート</a>
+
+    <!-- remodal -->
+    <div class="remodal w80" data-remodal-id="modal">
+        <form id="csvform" action="{{route('furima.user_export-csv')}}" method="POST">
+            @csrf
+            <div class='row mb-3'>
+                <div class='col-md-5'>
+                    <label class='h4'>開始日</label>
+                </div>
+                <div class="col-md-5">
+                    <label class='h4'>エクスポートの終端日</label>
+                </div>
+            </div>
+            <div class='row mb-3'>
+                <div class="col-md-5">
+                    <input data-provide="datepicker" class="form-control datepicker js-start-date"   type="datetime"  placeholder="出力開始日" name="start_date" value="" dusk='datepicker_first'>
+                </div>
+                <div class="col-md-2 h2 d-flex justify-content-center align-items-center">
+                    〜
+                </div>
+                <div class="col-md-5">
+                    <input data-provide="datepicker" class="form-control datepicker js-end-date"   type="datetime"  placeholder="出力終了日" name="end_date" value="" dusk='datepicker_last'>
+                </div>
+            </div>
+
+            <button data-remodal-action="cancel" class="btn btn-secondary">キャンセル</button>
+            <button type='submit' class="btn btn-primary">ダウンロード</button>
+        </form>
+    </div>
 @endsection
