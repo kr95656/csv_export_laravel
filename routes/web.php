@@ -17,3 +17,9 @@ Auth::routes();
 
 Route::get('/', 'ContactController@showContact')->name('top');
 Route::post('export-csv', 'ContactController@exportContactCsv')->name('export-csv');
+
+Route::prefix('furima') //prefixでurlの接頭辞を設定
+    ->namespace('Furima') //namespaceでcontrollerの接頭辞を設定
+    ->group(function() {
+        Route::get('user_export-csv', 'UserController@exportUsersCsv')->name('furima.user');
+    });

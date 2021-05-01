@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Contact extends Model
 {
+
+    protected $connection = 'mysql';
+
     public function getCsvData($start = null, $end = null)
     {
         $start_date = str_replace('年', '-', $start);

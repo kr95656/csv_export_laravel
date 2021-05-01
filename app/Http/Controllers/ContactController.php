@@ -21,6 +21,12 @@ class ContactController extends Controller
         //     ->get();
         // dd($designs);
 
+        // $users = DB::connection('mysql')->select('select * from designs');
+        // dd($users);
+        // $furima_user = DB::connection('mysql_A')->select('select * from users');
+        // dd($furima_user);
+
+
         //エイリアスで新たにカラム名を作成しないと、joinした値をひっぱてこられない？
         $contacts = Contact::select('contacts.*','c.name AS condition_name','d.name AS design_name')
             ->where('contacts.status', 1)
