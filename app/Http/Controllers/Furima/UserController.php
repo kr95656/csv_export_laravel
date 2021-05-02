@@ -25,7 +25,7 @@ class UserController extends Controller
     {
         $post = $request->all();
         $response = new StreamedResponse(function () use ($request, $post) {
-            $stream =fopen('php://output', 'W');
+            $stream =fopen('php://output', 'w');
 
             // 文字化け回避
             stream_filter_prepend($stream, 'convert.iconv.utf-8/cp932//TRANSLIT');
@@ -33,12 +33,12 @@ class UserController extends Controller
             // ヘッダーを追加
             fputcsv($stream, $this->getHeader());
 
-            $resuluts = $this->getCsvData($post['start_date'], $post['end_date']);
+            $results = $this->getCsvData($post['start_date'], $post['end_date']);
 
-            if (empty($resuluts[0])){
+            if (empty($results[0])){
                 fputcsv($stream, ['データが存在しません']);
             } else {
-                foreach ($resuluts as $row) {
+                foreach ($results as $row) {
                     fputcsv($stream, $this->csvRow($row));
                 }
             };
@@ -46,10 +46,11 @@ class UserController extends Controller
             //ファイルを閉じる
             fclose($stream);
         });
+
         // 汎用的なバイナリデータ (または本当のタイプが不明なバイナリデータ)で指定
         $response->headers->set('Content-Type', 'application/octet-stream');
         // 保存させるファイル名を指定
-        $response->headers->set('Content-Disposition', 'attachment; filename'. $post['start_date']. '〜'. $post['end_date']. 'furimaユーザー情報一覧.csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename='. $post['start_date']. '〜'. $post['end_date']. 'furimaユーザー情報一覧.csv');
 
         return $response;
     }
@@ -67,6 +68,7 @@ class UserController extends Controller
         ->table('users')
         ->select('users.*','i.name AS item_name', 'i.created_at AS item_created', 'i.updated_at AS item_updated_at', 'i.description AS item_description', 'i.price AS item_price', 'i.state AS item_state', 'i.bought_at AS item_bought_at')
         ->leftJoin('items AS i', 'users.id', '=', 'i.seller_id')
+        ->whereBetween('i.created_at', [$start_date. '00:00:00', $end_date. '23:59:59'])
         ->orderBy('i.created_at', 'ASC')
         ->get();
 
